@@ -52,7 +52,7 @@ export default function SignInPage() {
       {
         email: values.email,
         password: values.password,
-        callbackURL: "/dashboard",
+        callbackURL: "/",
         rememberMe: true,
       },
       {
@@ -60,7 +60,7 @@ export default function SignInPage() {
           setIsLoading(true);
         },
         onSuccess: () => {
-          router.push("/dashboard");
+          router.push("/");
         },
         onError: (ctx) => {
           setError(ctx.error.message);

@@ -16,7 +16,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -33,7 +32,6 @@ const signUpSchema = z.object({
   password: z
     .string()
     .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
-  image: z.string().url().optional().or(z.literal("")),
 });
 
 export default function SignUpPage() {
@@ -47,7 +45,6 @@ export default function SignUpPage() {
       name: "",
       email: "",
       password: "",
-      image: "",
     },
   });
 
@@ -60,15 +57,14 @@ export default function SignUpPage() {
         email: values.email,
         password: values.password,
         name: values.name,
-        image: values.image || undefined,
-        callbackURL: "/dashboard",
+        callbackURL: "/",
       },
       {
         onRequest: () => {
           setIsLoading(true);
         },
         onSuccess: () => {
-          router.push("/dashboard");
+          router.push("/");
         },
         onError: (ctx) => {
           setError(ctx.error.message);
@@ -139,20 +135,6 @@ export default function SignUpPage() {
                         placeholder="Minimum 8 caractères"
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="image"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>URL de l'image (optionnel)</FormLabel>
-                    <FormControl>
-                      <Input type="url" placeholder="https://..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
