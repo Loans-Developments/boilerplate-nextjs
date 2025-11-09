@@ -3,91 +3,181 @@
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import Link from "next/link";
+
+const signUpSchema = z.object({
+  name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+  email: z.string().email("Email invalide"),
+  password: z
+    .string()
+    .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+  image: z.string().url().optional().or(z.literal("")),
+});
 
 export default function SignUpPage() {
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      image: "",
+    },
+  });
 
-    const formData = new FormData(e.currentTarget);
+  async function onSubmit(values: z.infer<typeof signUpSchema>) {
+    setIsLoading(true);
+    setError(null);
 
     const { data, error } = await authClient.signUp.email(
       {
-        email: formData.get("email") as string,
-        password: formData.get("password") as string,
-        name: formData.get("name") as string,
-        image: (formData.get("image") as string) || undefined,
+        email: values.email,
+        password: values.password,
+        name: values.name,
+        image: values.image || undefined,
         callbackURL: "/dashboard",
       },
       {
         onRequest: () => {
-          // Afficher un loading
+          setIsLoading(true);
         },
         onSuccess: () => {
-          // Rediriger vers le dashboard
           router.push("/dashboard");
         },
         onError: (ctx) => {
           setError(ctx.error.message);
+          setIsLoading(false);
         },
       },
     );
 
     if (error) {
       setError(error.message);
+      setIsLoading(false);
     }
   }
 
   return (
-    <div>
-      <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name</label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            required
-            placeholder="John Doe"
-          />
-        </div>
+    <div className="flex min-h-screen items-center justify-center">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Créer un compte</CardTitle>
+          <CardDescription>
+            Inscrivez-vous pour commencer à utiliser l'application
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nom</FormLabel>
+                    <FormControl>
+                      <Input placeholder="John Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            placeholder="john@example.com"
-          />
-        </div>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="john@example.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            minLength={8}
-            placeholder="Min 8 characters"
-          />
-        </div>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mot de passe</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Minimum 8 caractères"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <div>
-          <label htmlFor="image">Image URL (optional)</label>
-          <input id="image" name="image" type="url" placeholder="https://..." />
-        </div>
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>URL de l'image (optionnel)</FormLabel>
+                    <FormControl>
+                      <Input type="url" placeholder="https://..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+              {error && (
+                <div className="text-sm text-red-500 text-center">{error}</div>
+              )}
 
-        <button type="submit">Sign Up</button>
-      </form>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Inscription..." : "S'inscrire"}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+        <CardFooter className="flex justify-center">
+          <p className="text-sm text-muted-foreground">
+            Déjà un compte ?{" "}
+            <Link href="/sign-in" className="text-primary hover:underline">
+              Se connecter
+            </Link>
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 }
