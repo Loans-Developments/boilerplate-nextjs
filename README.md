@@ -11,7 +11,32 @@ A robust foundation for building modern, scalable web applications. This boilerp
 - **Optimized Full-Stack Design**: Designed for scalability, best practices, and rapid development.
 
 ## Getting Started
-First, run the development server:
+
+### Database Setup
+
+**Start PostgreSQL with Docker:**
+Using Docker Compose (recommended)
+```bash
+docker-compose up -d
+
+# Or using Docker directly
+
+docker run --name postgres-db
+-e POSTGRES_USER=postgres
+-e POSTGRES_PASSWORD=postgres
+-e POSTGRES_DB=myapp
+-p 5432:5432
+-d postgres:latest
+```
+
+**Run Prisma migrations:**
+```bash
+npx prisma db push
+# or
+npx prisma db push
+```
+
+### Development Server
 
 ```bash
 npm run dev
