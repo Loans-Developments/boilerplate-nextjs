@@ -48,7 +48,7 @@ export default function SignInPage() {
     setIsLoading(true);
     setError(null);
 
-    const { data, error } = await authClient.signIn.email(
+    const { error } = await authClient.signIn.email(
       {
         email: values.email,
         password: values.password,
@@ -135,7 +135,7 @@ export default function SignInPage() {
           <p className="text-sm text-muted-foreground">
             Pas encore de compte ?{" "}
             <Link href="/sign-up" className="text-primary hover:underline">
-              S'inscrire
+              S&apos;inscrire
             </Link>
           </p>
         </CardFooter>

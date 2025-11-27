@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { User } from "better-auth/core";
 import { updateProfile } from "@/app/(dashboard)/actions";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, {

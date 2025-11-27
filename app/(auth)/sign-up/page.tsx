@@ -52,7 +52,7 @@ export default function SignUpPage() {
     setIsLoading(true);
     setError(null);
 
-    const { data, error } = await authClient.signUp.email(
+    const { error } = await authClient.signUp.email(
       {
         email: values.email,
         password: values.password,
@@ -85,7 +85,7 @@ export default function SignUpPage() {
         <CardHeader>
           <CardTitle>Créer un compte</CardTitle>
           <CardDescription>
-            Inscrivez-vous pour commencer à utiliser l'application
+            Inscrivez-vous pour commencer à utiliser l&apos;application
           </CardDescription>
         </CardHeader>
         <CardContent>
