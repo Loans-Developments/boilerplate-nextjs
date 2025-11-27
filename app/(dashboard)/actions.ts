@@ -79,13 +79,15 @@ export async function updatePassword(values: z.infer<typeof passwordFormSchema>)
     const account = await prisma.account.findFirst({
       where: {
         userId: session.user.id,
-        providerId: "email",
+        password: {
+          not: null,
+        },
       },
     });
 
     if (!account || !account.password) {
       return {
-        error: "User not found or password not set.",
+        error: "No password set for this account.",
       };
     }
 
