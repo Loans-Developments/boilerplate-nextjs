@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-export default function DashboardPage() {
+export default function SettingsPage() {
   // This page will redirect to the profile page by default.
-  redirect("/dashboard/profile");
+  redirect("/settings/profile");
 }

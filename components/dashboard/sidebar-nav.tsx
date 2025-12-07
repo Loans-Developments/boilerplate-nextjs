@@ -8,11 +8,11 @@ import { buttonVariants } from "@/components/ui/button";
 const sidebarNavItems = [
   {
     title: "Profile",
-    href: "/dashboard/profile",
+    href: "/settings/profile",
   },
   {
     title: "Security",
-    href: "/dashboard/security",
+    href: "/settings/security",
   },
 ];
 
